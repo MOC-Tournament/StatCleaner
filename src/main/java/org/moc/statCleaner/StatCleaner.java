@@ -1,6 +1,5 @@
 package org.moc.statCleaner;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.moc.statCleaner.command.CommandMain;
 import org.moc.statCleaner.command.CommandReset;
@@ -13,7 +12,6 @@ public final class StatCleaner extends JavaPlugin {
     public void onEnable() {
         // Config
         this.saveDefaultConfig();
-        FileConfiguration config = this.getConfig();
         // Command
         Objects.requireNonNull(this.getCommand("statreset")).setExecutor(new CommandReset(this));
         Objects.requireNonNull(this.getCommand("statcleaner")).setExecutor(new CommandMain(this));
