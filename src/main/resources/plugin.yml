@@ -1,0 +1,19 @@
+name: StatCleaner
+version: '0.0.1'
+main: org.moc.statCleaner.StatCleaner
+api-version: '1.21'
+description: Reset a player's all stat to default.
+author: JerryHan3
+
+commands:
+  statreset:
+    description: Reset a player's all stats to default.
+    aliases:
+      - str
+    permission: statcleaner.reset
+    usage: "Usage: /statreset <player>"
+
+permissions:
+  statcleaner.reset:
+    description: Able to reset a player's stats.
+    default: op
