@@ -1,5 +1,5 @@
 name: StatCleaner
-version: '0.0.1'
+version: '0.0.2'
 main: org.moc.statCleaner.StatCleaner
 api-version: '1.21'
 description: Reset a player's all stat to default.
@@ -12,8 +12,14 @@ commands:
       - str
     permission: statcleaner.reset
     usage: "Usage: /statreset <player>"
+  statcleaner:
+    description: Reload the config for this plugin.
+    usage: "Usage: /statcleaner reload"
 
 permissions:
   statcleaner.reset:
     description: Able to reset a player's stats.
+    default: op
+  statcleaner.reload:
+    description: Able to reload the plugin's config.
     default: op

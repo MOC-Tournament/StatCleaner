@@ -8,12 +8,19 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+import org.moc.statCleaner.StatCleaner;
 
 import java.util.Collection;
 
 public class CommandReset implements CommandExecutor {
+    private final StatCleaner parent;
+    public CommandReset(StatCleaner parent) {
+        this.parent = parent;
+    }
     /**
      * Execute when command `/statreset` is performed.
      * @param args command arguments
@@ -46,57 +53,82 @@ public class CommandReset implements CommandExecutor {
     /**
      * Reset a player's stat.
      * @param target targeted Player instance.
+     * @exception RuntimeException Throws when can't get player's GENERIC_MAX_HEALTH attribute.
      * */
     private void resetStat(Player target) throws RuntimeException {
-        // Reset health and hunger
-        AttributeInstance target_max_health = target.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if (target_max_health != null) {
-            target_max_health.setBaseValue(20);
-            target.setHealth(target_max_health.getValue());
+        // Read config
+        FileConfiguration config = this.parent.getConfig();
+        boolean isHealthEnabled = config.getBoolean("reset.health");
+        boolean isFoodEnabled = config.getBoolean("reset.food");
+        boolean isEffectEnabled = config.getBoolean("reset.effect");
+        boolean isAttributeEnabled = config.getBoolean("reset.attribute");
+        boolean isFlyEnabled = config.getBoolean("reset.fly");
+
+        // Reset health
+        if (isHealthEnabled)
+        {
+            AttributeInstance targetMaxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            if (targetMaxHealth != null) {
+                targetMaxHealth.setBaseValue(20);
+                target.setHealth(targetMaxHealth.getValue());
+            } else {
+                throw new RuntimeException("Can't get player's max health!");
+            }
         }
-        else {
-            throw new RuntimeException("Can't get player's max health!");
+
+        // Reset food
+        if (isFoodEnabled)
+        {
+            target.setFoodLevel(20);
+            target.setSaturation(5.0f);
         }
-        target.setFoodLevel(20);
-        target.setSaturation(5.0f);
 
         // Clear potion effects
-        Collection<PotionEffect> active_effects = target.getActivePotionEffects();
-        for (PotionEffect effect : active_effects) {
-            target.removePotionEffect(effect.getType());
+        if (isEffectEnabled)
+        {
+            Collection<PotionEffect> active_effects = target.getActivePotionEffects();
+            for (PotionEffect effect : active_effects) {
+                target.removePotionEffect(effect.getType());
+            }
         }
 
         // Reset all attributes
-        setAttribute(target, Attribute.GENERIC_ARMOR, 0);
-        setAttribute(target, Attribute.GENERIC_ARMOR_TOUGHNESS, 0);
-        setAttribute(target, Attribute.GENERIC_ATTACK_DAMAGE, 1);
-        setAttribute(target, Attribute.GENERIC_ATTACK_KNOCKBACK, 0);
-        setAttribute(target, Attribute.GENERIC_ATTACK_SPEED, 4);
-        setAttribute(target, Attribute.GENERIC_BURNING_TIME, 1);
-        setAttribute(target, Attribute.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE, 0);
-        setAttribute(target, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, 1);
-        setAttribute(target, Attribute.GENERIC_GRAVITY, 0.08);
-        setAttribute(target, Attribute.GENERIC_JUMP_STRENGTH, 0.42);
-        setAttribute(target, Attribute.GENERIC_KNOCKBACK_RESISTANCE, 0);
-        setAttribute(target, Attribute.GENERIC_LUCK, 0);
-        setAttribute(target, Attribute.GENERIC_MAX_ABSORPTION, 0);
-        setAttribute(target, Attribute.GENERIC_MOVEMENT_SPEED, 0.1);
-        setAttribute(target, Attribute.GENERIC_OXYGEN_BONUS, 0);
-        setAttribute(target, Attribute.GENERIC_SAFE_FALL_DISTANCE, 3);
-        setAttribute(target, Attribute.GENERIC_SCALE, 1);
-        setAttribute(target, Attribute.GENERIC_STEP_HEIGHT, 0.6);
-        setAttribute(target, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, 0);
-        setAttribute(target, Attribute.PLAYER_BLOCK_BREAK_SPEED, 1);
-        setAttribute(target, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, 4.5);
-        setAttribute(target, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, 3);
-        setAttribute(target, Attribute.PLAYER_MINING_EFFICIENCY, 0);
-        setAttribute(target, Attribute.PLAYER_SNEAKING_SPEED, 0.3);
-        setAttribute(target, Attribute.PLAYER_SUBMERGED_MINING_SPEED, 0.2);
-        setAttribute(target, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, 0);
+        if (isAttributeEnabled)
+        {
+            setAttribute(target, Attribute.GENERIC_ARMOR, 0);
+            setAttribute(target, Attribute.GENERIC_ARMOR_TOUGHNESS, 0);
+            setAttribute(target, Attribute.GENERIC_ATTACK_DAMAGE, 1);
+            setAttribute(target, Attribute.GENERIC_ATTACK_KNOCKBACK, 0);
+            setAttribute(target, Attribute.GENERIC_ATTACK_SPEED, 4);
+            setAttribute(target, Attribute.GENERIC_BURNING_TIME, 1);
+            setAttribute(target, Attribute.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE, 0);
+            setAttribute(target, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, 1);
+            setAttribute(target, Attribute.GENERIC_GRAVITY, 0.08);
+            setAttribute(target, Attribute.GENERIC_JUMP_STRENGTH, 0.42);
+            setAttribute(target, Attribute.GENERIC_KNOCKBACK_RESISTANCE, 0);
+            setAttribute(target, Attribute.GENERIC_LUCK, 0);
+            setAttribute(target, Attribute.GENERIC_MAX_ABSORPTION, 0);
+            setAttribute(target, Attribute.GENERIC_MOVEMENT_SPEED, 0.1);
+            setAttribute(target, Attribute.GENERIC_OXYGEN_BONUS, 0);
+            setAttribute(target, Attribute.GENERIC_SAFE_FALL_DISTANCE, 3);
+            setAttribute(target, Attribute.GENERIC_SCALE, 1);
+            setAttribute(target, Attribute.GENERIC_STEP_HEIGHT, 0.6);
+            setAttribute(target, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, 0);
+            setAttribute(target, Attribute.PLAYER_BLOCK_BREAK_SPEED, 1);
+            setAttribute(target, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, 4.5);
+            setAttribute(target, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, 3);
+            setAttribute(target, Attribute.PLAYER_MINING_EFFICIENCY, 0);
+            setAttribute(target, Attribute.PLAYER_SNEAKING_SPEED, 0.3);
+            setAttribute(target, Attribute.PLAYER_SUBMERGED_MINING_SPEED, 0.2);
+            setAttribute(target, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, 0);
+        }
 
         // Stop flying
-        target.setAllowFlight(false);
-        target.setFlying(false);
+        if (isFlyEnabled)
+        {
+            target.setAllowFlight(false);
+            target.setFlying(false);
+        }
     }
 
     /**

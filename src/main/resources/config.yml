@@ -1,0 +1,6 @@
+reset:
+  health: true
+  food: true
+  effect: true
+  attribute: true
+  fly: true
