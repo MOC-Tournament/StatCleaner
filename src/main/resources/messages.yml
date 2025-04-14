@@ -1,0 +1,6 @@
+error.no-permission: "&cYou don't have permission!"
+error.wrong-subcommand: "&cUnknown subcommand!"
+error.player-not-found: "&cThis player doesn't exist!"
+error.unexpected: "&cAn unexpected error happened. Detailed information: %s"
+success.reload: "&aSuccessfully reloaded the config."
+success.stat-cleaned: "&a Successfully reset %s's stat."

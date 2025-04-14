@@ -1,7 +1,6 @@
 package org.moc.statCleaner.command;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -10,11 +9,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.moc.statCleaner.StatCleaner;
 
 import java.util.Collection;
+import java.util.logging.Level;
 
 public class CommandReset implements CommandExecutor {
     private final StatCleaner parent;
@@ -30,23 +29,23 @@ public class CommandReset implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Refuse if no permission
         if (!sender.hasPermission("statcleaner.reset")) {
-            sender.sendMessage(ChatColor.RED + "You don't have permission!");
+            sender.sendMessage(parent.getMessageManager().getMessages("error.no-permission"));
             return false;
         }
         Player target = Bukkit.getPlayer(args[0]);
         // Abort if player doesn't exist
         if (target == null) {
-            sender.sendMessage(ChatColor.RED + "This player doesn't exist! ");
+            sender.sendMessage(parent.getMessageManager().getMessages("error.player-not-found"));
             return false;
         }
         try {
             resetStat(target);
         }
         catch (RuntimeException e) {
-            // TODO: Send error to console
-            sender.sendMessage(ChatColor.RED + "An unexpected error happened. Detailed information: " + e.getMessage());
+            parent.getLogger().log(Level.SEVERE, "An unexpected error occurred", e);
+            sender.sendMessage(parent.getMessageManager().getMessages("error.unexpected", e.getMessage()));
         }
-        sender.sendMessage(ChatColor.GREEN + "Successfully reset " + target.getName() + "'s stat. ");
+        sender.sendMessage(parent.getMessageManager().getMessages("success.stat-cleaned", target.getName()));
         return true;
     }
 

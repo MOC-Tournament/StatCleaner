@@ -1,6 +1,5 @@
 package org.moc.statCleaner.command;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,15 +16,16 @@ public class CommandMain implements CommandExecutor {
         if (args[0].equals("reload"))
         {
             if (!sender.hasPermission("statcleaner.reload")) {
-                sender.sendMessage(ChatColor.RED + "You don't have permission!");
+                sender.sendMessage(parent.getMessageManager().getMessages("error.no-permission"));
                 return false;
             }
             parent.reloadConfig();
-            sender.sendMessage(ChatColor.GREEN + "Successfully reloaded the config.");
+            parent.getMessageManager().reloadMessages();
+            sender.sendMessage(parent.getMessageManager().getMessages("success.reload"));
             return true;
         }
         else {
-            sender.sendMessage(ChatColor.RED + "Unknown subcommand!");
+            sender.sendMessage(parent.getMessageManager().getMessages("error.wrong-subcommand"));
             return false;
         }
     }
