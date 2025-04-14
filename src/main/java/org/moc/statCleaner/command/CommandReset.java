@@ -44,7 +44,7 @@ public class CommandReset implements CommandExecutor {
                 resetStat(target);
                 playersOutput.append(target.getName()).append(",");
             }
-            playersOutput.deleteCharAt(-1);
+            playersOutput.deleteCharAt(playersOutput.length() - 1);
             sender.sendMessage(parent.getMessageManager().getMessages("success.stat-cleaned", playersOutput.toString()));
         }
         catch (IllegalArgumentException e) {
