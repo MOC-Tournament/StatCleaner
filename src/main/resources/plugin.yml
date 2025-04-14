@@ -1,5 +1,5 @@
 name: StatCleaner
-version: '0.0.3'
+version: '0.0.4'
 main: org.moc.statCleaner.StatCleaner
 api-version: '1.21'
 description: Reset a player's all stat to default.
