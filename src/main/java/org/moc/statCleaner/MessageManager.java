@@ -2,9 +2,9 @@ package org.moc.statCleaner;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.moc.statCleaner.StatCleaner;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,7 @@ import java.util.logging.Level;
 public class MessageManager {
     private final StatCleaner parent;
     private YamlConfiguration messages;
-    private File messagesFile;
+    private final File messagesFile;
 
     public MessageManager(StatCleaner parent) {
         this.parent = parent;
@@ -23,15 +23,33 @@ public class MessageManager {
     }
 
     public void reloadMessages() {
+        // 不存在时创建新文件
         if (!messagesFile.exists()) {
             parent.saveResource("messages.yml", false);
         }
-
+        // 读取语言文件
         messages = YamlConfiguration.loadConfiguration(messagesFile);
+        // 合并、更新语言文件
+        Reader defaultMsgStream = new InputStreamReader(Objects.requireNonNull(parent.getResource("messages.yml")), StandardCharsets.UTF_8);
+        YamlConfiguration defaultMsg = YamlConfiguration.loadConfiguration(defaultMsgStream);
+        boolean needUpdate = false;
 
-        Reader defConfigStream = new InputStreamReader(Objects.requireNonNull(parent.getResource("messages.yml")), StandardCharsets.UTF_8);
-        YamlConfiguration defaultCfg = YamlConfiguration.loadConfiguration(defConfigStream);
-        messages.setDefaults(defaultCfg);
+        for (String key : defaultMsg.getKeys(true)) {
+            if (!messages.contains(key)) {
+                needUpdate = true;
+                messages.set(key, defaultMsg.get(key));
+                parent.getLogger().info("Appended new string " + key);
+            }
+        }
+
+        if (needUpdate) {
+            try {
+                messages.save(messagesFile);
+                parent.getLogger().info("New message file saved. ");
+            } catch (IOException e) {
+                parent.getLogger().severe("Failed to save new message file: " + e.getMessage());
+            }
+        }
     }
 
     /**

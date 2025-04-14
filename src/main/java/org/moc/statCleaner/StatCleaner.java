@@ -3,7 +3,6 @@ package org.moc.statCleaner;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.moc.statCleaner.command.CommandMain;
 import org.moc.statCleaner.command.CommandReset;
-import org.moc.statCleaner.MessageManager;
 
 import java.util.Objects;
 
@@ -22,6 +21,8 @@ public final class StatCleaner extends JavaPlugin {
         // Command
         Objects.requireNonNull(this.getCommand("statreset")).setExecutor(new CommandReset(this));
         Objects.requireNonNull(this.getCommand("statcleaner")).setExecutor(new CommandMain(this));
+        // Complete log
+        getLogger().info("StatCleaner " + getDescription().getVersion() + " has been successfully loaded!");
     }
 
     @Override

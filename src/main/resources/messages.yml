@@ -1,6 +1,7 @@
 error.no-permission: "&cYou don't have permission!"
 error.wrong-subcommand: "&cUnknown subcommand!"
-error.player-not-found: "&cThis player doesn't exist!"
+error.player-not-found: "&cThis player or selector \"%s\" doesn't exist!"
 error.unexpected: "&cAn unexpected error happened. Detailed information: %s"
+warn.entity-selector: "&6You're using an entity selector. Non-player entities is not supported yet, and their stat won't be reset."
 success.reload: "&aSuccessfully reloaded the config."
 success.stat-cleaned: "&a Successfully reset %s's stat."

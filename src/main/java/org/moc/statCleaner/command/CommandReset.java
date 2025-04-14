@@ -1,6 +1,5 @@
 package org.moc.statCleaner.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -11,8 +10,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.moc.statCleaner.StatCleaner;
+import org.moc.statCleaner.utils.SelectorParser;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 
 public class CommandReset implements CommandExecutor {
@@ -32,20 +33,27 @@ public class CommandReset implements CommandExecutor {
             sender.sendMessage(parent.getMessageManager().getMessages("error.no-permission"));
             return false;
         }
-        Player target = Bukkit.getPlayer(args[0]);
-        // Abort if player doesn't exist
-        if (target == null) {
-            sender.sendMessage(parent.getMessageManager().getMessages("error.player-not-found"));
-            return false;
+        if (args[0].startsWith("@e") || args[0].startsWith("@n")) {
+            parent.getLogger().log(Level.WARNING, "Entity selector will not affect on non-player entities! ");
+            sender.sendMessage(parent.getMessageManager().getMessages("warn.entity-selector"));
         }
         try {
-            resetStat(target);
+            List<Player> targets = SelectorParser.parsePlayers(sender, args[0]);
+            StringBuilder playersOutput = new StringBuilder();
+            for (Player target : targets) {
+                resetStat(target);
+                playersOutput.append(target.getName()).append(",");
+            }
+            playersOutput.deleteCharAt(-1);
+            sender.sendMessage(parent.getMessageManager().getMessages("success.stat-cleaned", playersOutput.toString()));
+        }
+        catch (IllegalArgumentException e) {
+            sender.sendMessage(parent.getMessageManager().getMessages("error.player-not-found"));
         }
         catch (RuntimeException e) {
             parent.getLogger().log(Level.SEVERE, "An unexpected error occurred", e);
             sender.sendMessage(parent.getMessageManager().getMessages("error.unexpected", e.getMessage()));
         }
-        sender.sendMessage(parent.getMessageManager().getMessages("success.stat-cleaned", target.getName()));
         return true;
     }
 
