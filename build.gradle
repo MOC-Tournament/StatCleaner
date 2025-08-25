@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.moc'
-version = '0.0.4'
+version = '0.0.6'
 
 repositories {
     mavenCentral()
@@ -21,7 +21,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT")
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

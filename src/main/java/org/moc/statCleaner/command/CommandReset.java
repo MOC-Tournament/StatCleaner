@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.moc.statCleaner.StatCleaner;
 import org.moc.statCleaner.utils.SelectorParser;
+import org.moc.statCleaner.utils.VersionDetector;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,12 +41,15 @@ public class CommandReset implements CommandExecutor {
         try {
             List<Player> targets = SelectorParser.parsePlayers(sender, args[0]);
             StringBuilder playersOutput = new StringBuilder();
+            boolean isPartialFailed = false;
             for (Player target : targets) {
-                resetStat(target);
+                if (resetStat(target)) isPartialFailed = true;
                 playersOutput.append(target.getName()).append(",");
+                target.sendMessage(parent.getMessageManager().getMessages("success.target-notify"));
             }
             playersOutput.deleteCharAt(playersOutput.length() - 1);
             sender.sendMessage(parent.getMessageManager().getMessages("success.stat-cleaned", playersOutput.toString()));
+            if (isPartialFailed) sender.sendMessage(parent.getMessageManager().getMessages("warn.version-not-supported"));
         }
         catch (IllegalArgumentException e) {
             sender.sendMessage(parent.getMessageManager().getMessages("error.player-not-found"));
@@ -62,7 +66,7 @@ public class CommandReset implements CommandExecutor {
      * @param target targeted Player instance.
      * @exception RuntimeException Throws when can't get player's GENERIC_MAX_HEALTH attribute.
      * */
-    private void resetStat(Player target) throws RuntimeException {
+    private boolean resetStat(Player target) throws RuntimeException {
         // Read config
         FileConfiguration config = this.parent.getConfig();
         boolean isHealthEnabled = config.getBoolean("reset.health");
@@ -70,16 +74,26 @@ public class CommandReset implements CommandExecutor {
         boolean isEffectEnabled = config.getBoolean("reset.effect");
         boolean isAttributeEnabled = config.getBoolean("reset.attribute");
         boolean isFlyEnabled = config.getBoolean("reset.fly");
+        boolean isPartialFailed = false;
 
         // Reset health
         if (isHealthEnabled)
         {
-            AttributeInstance targetMaxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            if (targetMaxHealth != null) {
-                targetMaxHealth.setBaseValue(20);
-                target.setHealth(targetMaxHealth.getValue());
-            } else {
-                throw new RuntimeException("Can't get player's max health!");
+            if (VersionDetector.isVersionAtLeast(9)) {
+                AttributeInstance targetMaxHealth = target.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                if (targetMaxHealth != null) {
+                    targetMaxHealth.setBaseValue(20);
+                    target.setHealth(targetMaxHealth.getValue());
+                } else {
+                    throw new RuntimeException("Can't get player's max health!");
+                }
+            }
+            else {
+                // 1.8 回退机制
+                try {
+                    target.setMaxHealth(20);
+                } catch (NoSuchMethodError ignored) {}
+                target.setHealth(target.getMaxHealth());
             }
         }
 
@@ -87,7 +101,14 @@ public class CommandReset implements CommandExecutor {
         if (isFoodEnabled)
         {
             target.setFoodLevel(20);
-            target.setSaturation(5.0f);
+            if (VersionDetector.isVersionAtLeast(8)) {
+                target.setSaturation(5.0f);
+            }
+            else {
+                // TODO: 在1.8以下恢复饱和度
+                parent.getLogger().warning("Can't recover saturation on version below 1.8 yet!");
+                isPartialFailed = true;
+            }
         }
 
         // Clear potion effects
@@ -102,32 +123,39 @@ public class CommandReset implements CommandExecutor {
         // Reset all attributes
         if (isAttributeEnabled)
         {
-            setAttribute(target, Attribute.GENERIC_ARMOR, 0);
-            setAttribute(target, Attribute.GENERIC_ARMOR_TOUGHNESS, 0);
-            setAttribute(target, Attribute.GENERIC_ATTACK_DAMAGE, 1);
-            setAttribute(target, Attribute.GENERIC_ATTACK_KNOCKBACK, 0);
-            setAttribute(target, Attribute.GENERIC_ATTACK_SPEED, 4);
-            setAttribute(target, Attribute.GENERIC_BURNING_TIME, 1);
-            setAttribute(target, Attribute.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE, 0);
-            setAttribute(target, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, 1);
-            setAttribute(target, Attribute.GENERIC_GRAVITY, 0.08);
-            setAttribute(target, Attribute.GENERIC_JUMP_STRENGTH, 0.42);
-            setAttribute(target, Attribute.GENERIC_KNOCKBACK_RESISTANCE, 0);
-            setAttribute(target, Attribute.GENERIC_LUCK, 0);
-            setAttribute(target, Attribute.GENERIC_MAX_ABSORPTION, 0);
-            setAttribute(target, Attribute.GENERIC_MOVEMENT_SPEED, 0.1);
-            setAttribute(target, Attribute.GENERIC_OXYGEN_BONUS, 0);
-            setAttribute(target, Attribute.GENERIC_SAFE_FALL_DISTANCE, 3);
-            setAttribute(target, Attribute.GENERIC_SCALE, 1);
-            setAttribute(target, Attribute.GENERIC_STEP_HEIGHT, 0.6);
-            setAttribute(target, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, 0);
-            setAttribute(target, Attribute.PLAYER_BLOCK_BREAK_SPEED, 1);
-            setAttribute(target, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, 4.5);
-            setAttribute(target, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, 3);
-            setAttribute(target, Attribute.PLAYER_MINING_EFFICIENCY, 0);
-            setAttribute(target, Attribute.PLAYER_SNEAKING_SPEED, 0.3);
-            setAttribute(target, Attribute.PLAYER_SUBMERGED_MINING_SPEED, 0.2);
-            setAttribute(target, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, 0);
+            if (VersionDetector.isVersionAtLeast(9)) {
+                setAttribute(target, "GENERIC_ARMOR", 0);
+                setAttribute(target, "GENERIC_ARMOR_TOUGHNESS", 0);
+                setAttribute(target, "GENERIC_ATTACK_DAMAGE", 1);
+                setAttribute(target, "GENERIC_ATTACK_KNOCKBACK", 0);
+                setAttribute(target, "GENERIC_ATTACK_SPEED", 4);
+                setAttribute(target, "GENERIC_BURNING_TIME", 1);
+                setAttribute(target, "GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE", 0);
+                setAttribute(target, "GENERIC_FALL_DAMAGE_MULTIPLIER", 1);
+                setAttribute(target, "GENERIC_GRAVITY", 0.08);
+                setAttribute(target, "GENERIC_JUMP_STRENGTH", 0.42);
+                setAttribute(target, "GENERIC_KNOCKBACK_RESISTANCE", 0);
+                setAttribute(target, "GENERIC_LUCK", 0);
+                setAttribute(target, "GENERIC_MAX_ABSORPTION", 0);
+                setAttribute(target, "GENERIC_MOVEMENT_SPEED", 0.1);
+                setAttribute(target, "GENERIC_OXYGEN_BONUS", 0);
+                setAttribute(target, "GENERIC_SAFE_FALL_DISTANCE", 3);
+                setAttribute(target, "GENERIC_SCALE", 1);
+                setAttribute(target, "GENERIC_STEP_HEIGHT", 0.6);
+                setAttribute(target, "GENERIC_WATER_MOVEMENT_EFFICIENCY", 0);
+                setAttribute(target, "PLAYER_BLOCK_BREAK_SPEED", 1);
+                setAttribute(target, "PLAYER_BLOCK_INTERACTION_RANGE", 4.5);
+                setAttribute(target, "PLAYER_ENTITY_INTERACTION_RANGE", 3);
+                setAttribute(target, "PLAYER_MINING_EFFICIENCY", 0);
+                setAttribute(target, "PLAYER_SNEAKING_SPEED", 0.3);
+                setAttribute(target, "PLAYER_SUBMERGED_MINING_SPEED", 0.2);
+                setAttribute(target, "PLAYER_SWEEPING_DAMAGE_RATIO", 0);
+            }
+            else {
+                // TODO: 在1.9以下恢复属性
+                parent.getLogger().warning("Can't modify attributes on version below 1.9 yet!");
+                isPartialFailed = true;
+            }
         }
 
         // Stop flying
@@ -136,18 +164,30 @@ public class CommandReset implements CommandExecutor {
             target.setAllowFlight(false);
             target.setFlying(false);
         }
+
+        target.saveData();
+        return isPartialFailed;
     }
 
     /**
      * Set an attribute back to a given value.
      * @param target targeted Attributable instance.
-     * @param attribute Attribute to reset.
+     * @param name Attribute's name to reset.
      * @param value value to set.
      * */
-    private void setAttribute(Attributable target, Attribute attribute, double value) {
-        AttributeInstance attributeInstance = target.getAttribute(attribute);
-        if (attributeInstance != null) {
-            attributeInstance.setBaseValue(value);
+    private void setAttribute(Attributable target, String name, double value) {
+        Attribute attribute = null;
+        try {
+            attribute = Attribute.valueOf(name);
+            AttributeInstance attributeInstance = target.getAttribute(attribute);
+            if (attributeInstance != null) {
+                attributeInstance.setBaseValue(value);
+            }
+            else {
+                parent.getLogger().info("Attribute " + name + "doesn't exist on current version. Ignored.");
+            }
+        } catch (IllegalArgumentException e) {
+            parent.getLogger().info("Attribute " + name + "doesn't exist on current version. Ignored.");
         }
     }
 }

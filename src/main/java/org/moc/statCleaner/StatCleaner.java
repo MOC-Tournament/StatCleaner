@@ -5,6 +5,7 @@ import org.moc.statCleaner.command.CommandMain;
 import org.moc.statCleaner.command.CommandReset;
 import org.moc.statCleaner.command.TabCompleter.TabMain;
 import org.moc.statCleaner.command.TabCompleter.TabReset;
+import org.moc.statCleaner.utils.VersionDetector;
 
 import java.util.Objects;
 
@@ -17,7 +18,9 @@ public final class StatCleaner extends JavaPlugin {
         this.saveDefaultConfig();
         // Messages
         if (!getDataFolder().exists()) {
-            getDataFolder().mkdir();
+            if (!getDataFolder().mkdir()) {
+                getLogger().severe("Failed to initialize plugin folder!");
+            }
         }
         messageManager = new MessageManager(this);
         // Command
@@ -27,6 +30,8 @@ public final class StatCleaner extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("statcleaner")).setTabCompleter(new TabMain());
         // Complete log
         getLogger().info("StatCleaner " + getDescription().getVersion() + " has been successfully loaded!");
+        // Version warning
+        if (!VersionDetector.isVersionAtLeast(9)) getLogger().warning("You are using a version that hasn't be fully supported yet. Some stats like saturation or attributes will be skipped!");
     }
 
     @Override
