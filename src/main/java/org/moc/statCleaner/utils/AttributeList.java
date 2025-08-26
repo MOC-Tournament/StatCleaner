@@ -1,9 +1,28 @@
+/*
+ * Copyright (c) 2025. JerryHan3.
+ *
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this software. If not, see <https://www.gnu.org/licenses/>
+ * and navigate to version 3 of the GNU Affero General Public License.
+ */
+
 package org.moc.statCleaner.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public record AttributeList() {
+    @Deprecated
     public static String[] entries_pre_21_3 = { // Before 1.21.3
             "GENERIC_ARMOR", // 1.9
             "GENERIC_ARMOR_TOUGHNESS", // 1.12
@@ -69,6 +88,7 @@ public record AttributeList() {
         put("PLAYER_SUBMERGED_MINING_SPEED",  0.2d);
         put("PLAYER_SWEEPING_DAMAGE_RATIO",  0d);
     }};
+    @Deprecated
     public static String[] entries_after_21_3 = {
             "ARMOR", // 1.9
             "ARMOR_TOUGHNESS", // 1.12

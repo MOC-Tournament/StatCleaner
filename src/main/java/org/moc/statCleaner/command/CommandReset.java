@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2025. JerryHan3.
+ *
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this software. If not, see <https://www.gnu.org/licenses/>
+ * and navigate to version 3 of the GNU Affero General Public License.
+ */
+
 package org.moc.statCleaner.command;
 
 import org.bukkit.attribute.Attributable;
@@ -129,10 +147,6 @@ public class CommandReset implements CommandExecutor {
         if (isAttributeEnabled)
         {
             if (isVersionAtLeast(9)) {
-//                String[] attributes = AttributeList.entries_pre_21_3;
-//                if (VersionDetector.isVersionAtLeast(21, 3)) {
-//                    attributes = AttributeList.entries_after_21_3;
-//                }
                 Map<String, Double> defaults = new HashMap<>(default_pre_21_3);
                 if (isVersionAtLeast(21, 3)) {
                     defaults = new HashMap<>(default_after_21_3);
@@ -146,33 +160,7 @@ public class CommandReset implements CommandExecutor {
                         fail_count++;
                     }
                 }
-                if (fail_count > 0 ) parent.getLogger().info(fail_count + "attribute(s) doesn't exist on current version. Ignored.");;
-//                setAttribute(target, "GENERIC_ARMOR", 0);
-//                setAttribute(target, "GENERIC_ARMOR_TOUGHNESS", 0);
-//                setAttribute(target, "GENERIC_ATTACK_DAMAGE", 1);
-//                setAttribute(target, "GENERIC_ATTACK_KNOCKBACK", 0);
-//                setAttribute(target, "GENERIC_ATTACK_SPEED", 4);
-//                setAttribute(target, "GENERIC_BURNING_TIME", 1);
-//                setAttribute(target, "GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE", 0);
-//                setAttribute(target, "GENERIC_FALL_DAMAGE_MULTIPLIER", 1);
-//                setAttribute(target, "GENERIC_GRAVITY", 0.08);
-//                setAttribute(target, "GENERIC_JUMP_STRENGTH", 0.42);
-//                setAttribute(target, "GENERIC_KNOCKBACK_RESISTANCE", 0);
-//                setAttribute(target, "GENERIC_LUCK", 0);
-//                setAttribute(target, "GENERIC_MAX_ABSORPTION", 0);
-//                setAttribute(target, "GENERIC_MOVEMENT_SPEED", 0.1);
-//                setAttribute(target, "GENERIC_OXYGEN_BONUS", 0);
-//                setAttribute(target, "GENERIC_SAFE_FALL_DISTANCE", 3);
-//                setAttribute(target, "GENERIC_SCALE", 1);
-//                setAttribute(target, "GENERIC_STEP_HEIGHT", 0.6);
-//                setAttribute(target, "GENERIC_WATER_MOVEMENT_EFFICIENCY", 0);
-//                setAttribute(target, "PLAYER_BLOCK_BREAK_SPEED", 1);
-//                setAttribute(target, "PLAYER_BLOCK_INTERACTION_RANGE", 4.5);
-//                setAttribute(target, "PLAYER_ENTITY_INTERACTION_RANGE", 3);
-//                setAttribute(target, "PLAYER_MINING_EFFICIENCY", 0);
-//                setAttribute(target, "PLAYER_SNEAKING_SPEED", 0.3);
-//                setAttribute(target, "PLAYER_SUBMERGED_MINING_SPEED", 0.2);
-//                setAttribute(target, "PLAYER_SWEEPING_DAMAGE_RATIO", 0);
+                if (fail_count > 0 ) parent.getLogger().info(fail_count + "attribute(s) doesn't exist on current version. Ignored.");
             }
             else {
                 // TODO: 在1.9以下恢复属性
