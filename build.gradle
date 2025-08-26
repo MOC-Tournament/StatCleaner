@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.moc'
-version = '0.0.6'
+version = '0.0.6-alt1'
 
 repositories {
     mavenCentral()

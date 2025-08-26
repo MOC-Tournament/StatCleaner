@@ -140,7 +140,7 @@ public class CommandReset implements CommandExecutor {
                 int fail_count = 0;
                 for (Map.Entry<String, Double> entry : defaults.entrySet()) {
                     try {
-                        setAttribute(target, entry.getKey(), entry.getValue());
+                        setAttribute(target, entry.getKey());
                     }
                     catch (IllegalArgumentException ignored) {
                         fail_count++;
@@ -204,6 +204,24 @@ public class CommandReset implements CommandExecutor {
         AttributeInstance attributeInstance = target.getAttribute(attribute);
         if (attributeInstance != null) {
             attributeInstance.setBaseValue(value);
+        }
+        else {
+            parent.getLogger().info("Attribute " + name + "doesn't exist on current version. Ignored.");
+            throw new IllegalArgumentException("");
+        }
+    }
+
+    /**
+     * Set an attribute back to the default value.
+     * @param target targeted Attributable instance.
+     * @param name Attribute's name to reset.
+     * */
+    private void setAttribute(Attributable target, String name) throws IllegalArgumentException {
+        Attribute attribute = null;
+        attribute = Attribute.valueOf(name);
+        AttributeInstance attributeInstance = target.getAttribute(attribute);
+        if (attributeInstance != null) {
+            attributeInstance.setBaseValue(attributeInstance.getDefaultValue());
         }
         else {
             parent.getLogger().info("Attribute " + name + "doesn't exist on current version. Ignored.");
