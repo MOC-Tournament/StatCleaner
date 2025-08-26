@@ -199,11 +199,30 @@ public class CommandReset implements CommandExecutor {
      * @param value value to set.
      * */
     private void setAttribute(Attributable target, String name, double value) throws IllegalArgumentException {
-        Attribute attribute = null;
+        Attribute attribute;
         attribute = Attribute.valueOf(name);
         AttributeInstance attributeInstance = target.getAttribute(attribute);
         if (attributeInstance != null) {
             attributeInstance.setBaseValue(value);
+        }
+        else {
+            parent.getLogger().info("Attribute " + name + "doesn't exist on current version. Ignored.");
+            throw new IllegalArgumentException("");
+        }
+    }
+
+    /**
+     * Set an attribute back to the default value.
+     * Known issue: Players' `MOVEMENT_SPEED`'s default value is wrong. Should be 0.1, but 0.7.
+     * @param target targeted Attributable instance.
+     * @param name Attribute's name to reset.
+     * */
+    private void setAttribute(Attributable target, String name) throws IllegalArgumentException {
+        Attribute attribute;
+        attribute = Attribute.valueOf(name);
+        AttributeInstance attributeInstance = target.getAttribute(attribute);
+        if (attributeInstance != null) {
+            attributeInstance.setBaseValue(attributeInstance.getDefaultValue());
         }
         else {
             parent.getLogger().info("Attribute " + name + "doesn't exist on current version. Ignored.");
