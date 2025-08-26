@@ -25,4 +25,17 @@ public class VersionDetector {
             return Integer.parseInt(parts[2]) > minor;
         }
     }
+
+    public static int getMajorVersion() {
+        String version = Bukkit.getBukkitVersion().split("-")[0];
+        String[] parts = version.split("\\.");
+        return Integer.parseInt(parts[1]);
+    }
+
+    public static int getMinorVersion() {
+        String version = Bukkit.getBukkitVersion().split("-")[0];
+        String[] parts = version.split("\\.");
+        if (parts[2] == null) return 0;
+        return Integer.parseInt(parts[2]);
+    }
 }

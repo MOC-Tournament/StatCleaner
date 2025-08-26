@@ -29,3 +29,5 @@ lib/quasar.jar
 # IntelliJ
 **/out/
 /classes/
+*.log
+test/
