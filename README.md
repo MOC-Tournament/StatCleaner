@@ -6,7 +6,8 @@
 [![License AGPL-3.0](https://img.shields.io/github/license/MOC-Tournament/StatCleaner?style=for-the-badge)](https://github.com/MOC-Tournament/StatCleaner/blob/master/LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/MOC-Tournament/StatCleaner?style=for-the-badge)](https://github.com/MOC-Tournament/StatCleaner/issues)
 
-<!-- Preserved for download badges here-->
+[![Modrinth Download](https://img.shields.io/modrinth/dt/YIxURHKO?style=for-the-badge&label=Modrinth%20Download&color=1bd96a)](https://modrinth.com/plugin/statcleaner)
+
 **StatCleaner**，一个命令即可重置玩家的全部属性。   
 **StatCleaner**, reset player's all stats in one command. 
 </div>
