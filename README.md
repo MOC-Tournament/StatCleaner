@@ -1,6 +1,7 @@
 <div align="center">
-<h1>StatCleaner</h1>
-
+  <img src="https://repository-images.githubusercontent.com/917029326/b55757a1-a971-49e5-a873-645ab1c9ce1a" width="80%">
+<br><br>
+ 
 [![Support 1.9-1.21.8](https://img.shields.io/badge/Support_Version-1.9--1.21.8-blue?style=for-the-badge)](#)
 [![License AGPL-3.0](https://img.shields.io/github/license/MOC-Tournament/StatCleaner?style=for-the-badge)](https://github.com/MOC-Tournament/StatCleaner/blob/master/LICENSE)
 [![GitHub Issues](https://img.shields.io/github/issues/MOC-Tournament/StatCleaner?style=for-the-badge)](https://github.com/MOC-Tournament/StatCleaner/issues)
