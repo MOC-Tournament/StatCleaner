@@ -27,7 +27,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.jetbrains.annotations.NotNull;
 import org.moc.statCleaner.StatCleaner;
 import org.moc.statCleaner.utils.SelectorParser;
 
@@ -48,7 +47,7 @@ public class CommandReset implements CommandExecutor {
      * @return true if command is properly execute, false otherwise.
      * */
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         // Refuse if no permission
         if (!sender.hasPermission("statcleaner.reset")) {
             sender.sendMessage(parent.getMessageManager().getMessages("error.no-permission"));
