@@ -27,13 +27,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 import org.moc.statCleaner.StatCleaner;
 import org.moc.statCleaner.utils.SelectorParser;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 import static org.moc.statCleaner.utils.AttributeList.default_pre_21_3;
@@ -47,17 +45,24 @@ public class CommandReset implements CommandExecutor {
     }
     /**
      * Execute when command `/statreset` is performed.
-     * @param args command arguments
      * @return true if command is properly execute, false otherwise.
      * */
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         // Refuse if no permission
         if (!sender.hasPermission("statcleaner.reset")) {
             sender.sendMessage(parent.getMessageManager().getMessages("error.no-permission"));
             return false;
         }
-        if (args[0].startsWith("@e") || args[0].startsWith("@n")) {
+        if (args.length == 0) {
+            args = new String[] {"@s"};
+        }
+        if (Objects.equals(args[0], "@s") && !(sender instanceof Player)) {
+            parent.getLogger().log(Level.WARNING, "A command block or the console is attempting to reset their stat!");
+            sender.sendMessage(parent.getMessageManager().getMessages("error.target-wrong-type"));
+            return false;
+        }
+        else if (args[0].startsWith("@e") || args[0].startsWith("@n")) {
             parent.getLogger().log(Level.WARNING, "Entity selector will not affect on non-player entities! ");
             sender.sendMessage(parent.getMessageManager().getMessages("warn.entity-selector"));
         }
@@ -87,6 +92,7 @@ public class CommandReset implements CommandExecutor {
     /**
      * Reset a player's stat.
      * @param target targeted Player instance.
+     * @return whether the environment is not fully supported.
      * @exception RuntimeException Throws when can't get player's GENERIC_MAX_HEALTH attribute.
      * */
     private boolean resetStat(Player target) throws RuntimeException {

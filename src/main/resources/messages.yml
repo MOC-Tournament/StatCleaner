@@ -1,6 +1,7 @@
 error.no-permission: "&cYou don't have permission!"
 error.wrong-subcommand: "&cUnknown subcommand!"
 error.player-not-found: "&cThis player or selector \"%s\" doesn't exist!"
+error.target-wrong-type: "&cThe target is not a player!"
 error.unexpected: "&cAn unexpected error happened. Detailed information: %s"
 warn.entity-selector: "&6You're using an entity selector. Non-player entities is not supported yet, and their stat won't be reset."
 warn.version-not-supported: "&6Your server version is not fully supported yet. Some stats (saturation, attribute) can't be reset and has been skipped. \nCheck console for detailed information."
